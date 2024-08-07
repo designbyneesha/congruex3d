@@ -1,0 +1,475 @@
+$(document).ready(function () {
+  //APAC Gallery Lightbox Start
+
+  $(".gallery-slides").slick({
+    infinite: true,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    arrows: true,
+    focusOnSelect: false,
+    accessibility: false,
+    responsive: [
+      {
+        breakpoint: 1281,
+        settings: {
+          slidesToShow: 4,
+        },
+      },
+      {
+        breakpoint: 1025,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 767,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  });
+
+  //APAC Gallery Lightbox END
+
+  $(".gallery-slides").slickLightbox({
+    itemSelector: "a",
+    navigateByKeyboard: true,
+    slick: function ($e) {
+      $e.find(".slick-lightbox-slick-iframe").each(function () {
+        $(this).attr("data-src", $(this).attr("src")).attr("src", "");
+      });
+
+      function clearIframe(slick, index) {
+        var $iframe = $(slick.$slides.get(index)).find(
+          ".slick-lightbox-slick-iframe"
+        );
+        if ($iframe.length) {
+          setTimeout(function () {
+            $iframe.attr("src", "");
+          }, slick.options.speed);
+        }
+      }
+
+      function loadIframe(slick, index) {
+        var $iframe = $(slick.$slides.get(index)).find(
+          ".slick-lightbox-slick-iframe"
+        );
+        if ($iframe.length) $iframe.attr("src", $iframe.attr("data-src"));
+      }
+
+      /**
+       * Return slick instance
+       */
+      return $e
+        .find(".slick-lightbox-slick")
+        .on("init", function (event, slick) {
+          loadIframe(slick, slick.currentSlide);
+        })
+        .on("beforeChange", function (event, slick, currentSlide, nextSlide) {
+          clearIframe(slick, currentSlide);
+          loadIframe(slick, nextSlide);
+        })
+        .slick();
+    },
+  });
+});
+
+function getUrlVars() {
+  var vars = [],
+    hash;
+  var hashes = window.location.href
+    .slice(window.location.href.indexOf("?") + 1)
+    .split("#");
+  for (var i = 0; i < hashes.length; i++) {
+    hash = hashes[i].split("=");
+    vars.push(hash[0]);
+    vars[hash[0]] = hash[1];
+  }
+  return vars;
+}
+
+function referralCookie() {
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  $query = Object.fromEntries(urlSearchParams.entries());
+  var utm = $query["utm_source"];
+  var eid = $query["eid"];
+  var fbclid = $query["fbclid"];
+  var expires = new Date(Date.now() + 86400 * 1000).toUTCString();
+  if (utm) {
+    document.cookie =
+      "utm_source=" +
+      $query["utm_source"] +
+      "; expires=" +
+      expires +
+      ";path=/;";
+    setTimeout(function () {
+      document.getElementById("input_22_24").setAttribute("value", utm);
+    }, 1000);
+  }
+  if (eid) {
+    document.cookie =
+      "eid=" + $query["eid"] + "; expires=" + expires + ";path=/;";
+    setTimeout(function () {
+      document.getElementById("input_22_25").setAttribute("value", eid);
+    }, 1000);
+  }
+  if (fbclid) {
+    document.cookie =
+      "fbclid=" + $query["fbclid"] + "; expires=" + expires + ";path=/;";
+    setTimeout(function () {
+      document.getElementById("input_22_31").setAttribute("value", fbclid);
+    }, 1000);
+  }
+}
+referralCookie();
+
+// Animate on Scroll
+AOS.init({
+  offset: 300,
+  duration: 600,
+  easing: "ease-in-sine",
+  delay: 100,
+  disable: "mobile",
+});
+
+// Rellax
+var rellax = document.getElementsByClassName("rellax");
+
+if (rellax) {
+  new Rellax(".rellax");
+}
+
+jQuery(document).ready(function ($) {
+  // Business Unit Expertise Switch
+  $(".expertise-switch").click(function (e) {
+    e.preventDefault();
+    $(".expertise-switch.active").not(this).toggleClass("active");
+    $(this).addClass("active");
+    $content = $(this).data("expertise");
+    $(".expertise-window div.active:not(" + $content + ")").toggleClass(
+      "active inactive"
+    );
+    $(".expertise-window div." + $content).toggleClass("active inactive");
+  });
+
+  // News Filter
+  $(".news-filter .news-filter-button").click(function (e) {
+    e.preventDefault();
+    $filter = $(this).data("filter");
+
+    if ($(this).hasClass("all")) {
+      $(".news-card").show("slow");
+      $(".news-filter .news-filter-button").not(this).removeClass("active");
+      $(this).addClass("active");
+    } else if ($(this).hasClass("active")) {
+      $(".news-card").show("slow");
+      $(this).removeClass("active");
+      $(".news-filter .news-filter-button.all").addClass("active");
+    } else {
+      $(".news-filter .news-filter-button.active")
+        .not(this)
+        .removeClass("active");
+      $(this).addClass("active");
+
+      $(".news-card." + $filter).each(function () {
+        $(this).show("slow");
+      });
+
+      $(".news-card:not('." + $filter + "')").hide("slow");
+    }
+  });
+
+  // Business Unit Job Link
+  $(".expertise-switch").click(function (e) {
+    e.preventDefault();
+    $(".expertise-switch.active").not(this).toggleClass("active");
+    $(this).addClass("active");
+    $content = $(this).data("expertise");
+    $(".expertise-window div.active:not(" + $content + ")").toggleClass(
+      "active inactive"
+    );
+    $(".expertise-window div." + $content).toggleClass("active inactive");
+  });
+
+  // Business Unit Slick Carousel
+  $(".ou-hero-carousel, .ou-hero-mobile-carousel").slick({
+    autoplay: true,
+    // adaptiveHeight: true,
+    dots: false,
+  });
+
+  // Testimonials
+  $(".quotes").slick({
+    dots: false,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 6000,
+    speed: 800,
+    slidesToShow: 1,
+    adaptiveHeight: true,
+    draggable: false,
+    swipe: false,
+  });
+
+  //Toggle accordian
+  $(".job.toggle").click(function (e) {
+    e.preventDefault();
+
+    var $this = $(this);
+
+    if ($this.next().hasClass("show")) {
+      $this.next().removeClass("show");
+      $this.next().slideUp(350);
+    } else {
+      $this.parent().parent().find(".inner").removeClass("show");
+      $this.parent().parent().find(".inner").slideUp(350);
+      $this.next().toggleClass("show");
+      $this.next().slideToggle(350);
+    }
+  });
+  //Tab
+
+  $(".benefits-tab-nav span").on("click", function () {
+    $([$(this).parent()[0], $($(this).data("href"))[0]])
+      .addClass("active")
+      .siblings(".active")
+      .removeClass("active");
+    $(".coin-flip").toggleClass("flipped");
+  });
+
+  // Smooth Scroll
+  // Select all links with hashes
+  (function ($) {
+    $(
+      'a[href*="#"]:not(".tick"):not(".modal_window"):not(".news-filter-button"):not(".cgx-tabs-nav-link")'
+    )
+      // Remove links that don't actually link to anything
+      .not('[href="#"]')
+      .not('[href="#0"]')
+      .click(function (event) {
+        // On-page links
+        if (
+          location.pathname.replace(/^\//, "") ==
+            this.pathname.replace(/^\//, "") &&
+          location.hostname == this.hostname
+        ) {
+          // Figure out element to scroll to
+          var target = $(this.hash);
+
+          target = target.length
+            ? target
+            : $("[name=" + this.hash.slice(1) + "]");
+          //console.log(target);
+          // Does a scroll target exist?
+          if (target.length) {
+            // Only prevent default if animation is actually gonna happen
+            event.preventDefault();
+            var yOffset = -50;
+            var element = document.getElementById(target[0].id);
+            var y =
+              element.getBoundingClientRect().top +
+              window.pageYOffset +
+              yOffset;
+            window.scrollTo({ top: y, behavior: "smooth" });
+          }
+        }
+      });
+  })(jQuery);
+
+  // matchHeight
+  $(".matchHeight").matchHeight({
+    property: "height",
+    byRow: true,
+  });
+
+  // $(".operating-unit-logo").matchHeight({
+  //   property: "height",
+  //   byRow: true,
+  // });
+
+  $(".ingest-row-three .gfield_label").matchHeight({
+    property: "height",
+    byRow: true,
+  });
+
+  // CGX Tabs
+  $(".cgx-tabs-nav-link").click(function (e) {
+    e.preventDefault();
+    $(".cgx-tabs-nav-item a.active").not(this).toggleClass("active");
+    $(this).addClass("active");
+    $content = $(this).attr("href");
+    $(".cgx-tab-pane.active:not(" + $content + ")").toggleClass(
+      "active inactive"
+    );
+    $(".cgx-tab-pane" + $content).toggleClass("active inactive");
+  });
+
+  $(".cgx-tabs-nav-item:first-of-type .cgx-tabs-nav-link").click();
+
+  // CGX Accordion
+  $(".accordion-btn").click(function (e) {
+    if ($(this).parent().hasClass("active")) {
+      $(this).parent().removeClass("active");
+      $(this).parent().find(".accordion-content").slideToggle(350);
+    } else {
+      $(".accordion-item.active").find(".accordion-content").slideToggle(350);
+      $(".accordion-item.active").toggleClass("active");
+      $(this).parent().toggleClass("active");
+      $(this).parent().find(".accordion-content").slideToggle(350);
+    }
+  });
+
+  // Home Contact form switcher
+  $(".formswitcher").click(function () {
+    $(".formswitcher").toggleClass("active");
+    $(".switchform").toggleClass("active");
+  });
+
+  // Home service switcher
+  $(".service-grid").click(function () {
+    $(".service-grid").not(this).removeClass("active");
+    $(this).toggleClass("active");
+  });
+
+  // Job board custom jobs w/ descriptions
+  $(".custom-req").click(function (e) {
+    e.preventDefault();
+    var desc = $(this).closest(".req-front").siblings(".req-back");
+    if (desc.hasClass("active")) {
+      desc.removeClass("active");
+    } else {
+      $(".req-back.active").toggleClass("active");
+      desc.addClass("active");
+    }
+  });
+
+  $(".tab-nav span").on("click", function () {
+    $([$(this).parent()[0], $($(this).data("href"))[0]])
+      .addClass("active")
+      .siblings(".active")
+      .removeClass("active");
+  });
+  // Populate jobs dropdown with OU evergreen jobs
+  var dataroles = new Array();
+  var reqids = new Array();
+  $("a.ou-job-detail-apply.button").each(function (i) {
+    var datarole = $(this).data("role");
+    var reqid = $(this).data("reqid");
+    dataroles.push(datarole);
+    reqids.push(reqid);
+  });
+  for (i = 0; i < dataroles.length; i++) {
+    let r = reqids[i] ? " data-reqid=" + reqids[i] : "";
+    var data = "<option" + r + ">" + dataroles[i] + "</option>";
+    $("#field_27_9 select").append(data);
+    $("#field_21_9 select").append(data);
+    $("#field_22_9 select").append(data);
+    $("#field_19_9 select").append(data);
+  }
+  $("#field_27_9 select").append("<option>Other</option>");
+  $("#field_21_9 select").append("<option>Other</option>");
+  $("#field_22_9 select").append("<option>Other</option>");
+  $("#field_19_9 select").append("<option>Other</option>");
+
+  // OU Page - populate gravity form when applying
+  $(".ou-job-detail-apply").click(function () {
+    let role = $(this).attr("data-role");
+    let reqid = $(this).attr("data-reqid");
+    // local
+    $("#input_27_9").val(role);
+    $("#input_27_26").val(reqid);
+    $("#input_19_9").val(role);
+    $("#input_19_26").val(reqid);
+    // dev
+    $("#input_21_9").val(role);
+    $("#input_21_23").val(reqid);
+    // live
+    $("#input_22_9").val(role);
+    $("#input_22_27").val(reqid);
+  });
+
+  // Update reqid if dropdown changes
+  $(".job-select select").change(function () {
+    let req = $(this).find(":selected").data("reqid");
+    $("#input_27_26").val(req);
+    $("#input_21_23").val(req);
+    $("#input_22_27").val(req);
+  });
+
+  if ($("#ou-job-board").length) {
+    if (!$(".job.toggle").length) {
+      $(".job-section-left").remove();
+    }
+  }
+
+  // APAC Testimonials
+  $(".quotes-apac").slick({
+    dots: false,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 6000,
+    speed: 800,
+    slidesToShow: 1,
+    adaptiveHeight: true,
+    draggable: false,
+    swipe: false,
+  });
+
+  //gptw Badge show on load and hide on click
+  $(".fixed-gptw-section").addClass("show");
+  $(".gptw-close").click(function () {
+    $(".fixed-gptw-section").removeClass("show");
+  });
+});
+
+var turnSection = $(".turn-key-vertical-accordian ul li");
+
+function toggleAccordion() {
+  turnSection.removeClass("active");
+  $(this).addClass("active");
+}
+
+turnSection.on("click", toggleAccordion);
+
+//Global Accordian
+$(".global-accordian.toggle").click(function (e) {
+  e.preventDefault();
+
+  var $this = $(this);
+
+  if ($this.next().hasClass("show")) {
+    $this.next().removeClass("show");
+    $this.removeClass("active");
+    $this.next().slideUp(350);
+  } else {
+    $this.parent().parent().find(".inner").removeClass("show");
+    $this.parent().find(".toggle").removeClass("active");
+    $this.parent().parent().find(".inner").slideUp(350);
+    $this.next().toggleClass("show");
+    $this.toggleClass("active");
+    $this.next().slideToggle(350);
+  }
+});
+
+//New Menu Design Example
+
+// $(document).ready(function () {
+//   var $hamburger = $(".hamburger"),
+//     $nav = $("#site-nav"),
+//     $fullscreenhead = $("#fullscreenhead");
+
+//   $hamburger.click(function () {
+//     $("body").toggleClass("js");
+//     $(this).toggleClass("is-active");
+//     $nav.toggleClass("is-active");
+//     $fullscreenhead.toggleClass("is-active");
+//     return false;
+//   });
+// });

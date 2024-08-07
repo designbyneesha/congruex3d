@@ -1,0 +1,186 @@
+$(document)
+  .ready(function () {
+    // $('.page-block.background:first-child').each(function(){
+    // 	$(this).after('<div class="clearfix"></div>');
+    // });
+
+    $(".page-block").each(function () {
+      if ($(this).next().hasClass("case-studies")) {
+        $(this).addClass("before-case-studies");
+      }
+    });
+
+    $(".page-block:nth-child(3), .page-block:nth-child(4)").each(function () {
+      $(this).addClass("on");
+    });
+
+    if ($("#bitnami-banner").length > 0) {
+      $("#bitnami-banner").remove();
+    }
+
+    $(window).on("resize", function () {
+      var width = $(window).width();
+      // Set the clip to the full height of page
+      $(".page-block.background").each(function () {
+        $(this).find(".clip-container").css("max-height", $("#page").height());
+      });
+
+      // Set the mobile left stripes to fill the first section
+      $(".page-block.background.magnet-left").each(function () {
+        if (width <= 960) {
+          var h =
+            $(this).next(".clearfix").length > 0
+              ? $(this).next().next(".page-block").outerHeight(true)
+              : $(this).next(".page-block").outerHeight(true);
+          $(this)
+            .find(".full-container")
+            .css("height", Math.ceil(h) + "px");
+        } else {
+          $(this).find(".full-container").css("height", "");
+        }
+      });
+
+      // Set the mobile right stripes to fill the last section
+      $(".page-block.background.magnet-right").each(function () {
+        var me = $(this);
+        var first = me.nextUntil(".page-block:not(.image-text)").first();
+        var last = me.nextUntil(".page-block:not(.image-text)").last();
+        if (width <= 960) {
+          me.find(".full-container").css(
+            "height",
+            Math.ceil(last.outerHeight(true)) + "px"
+          );
+          me.css("top", Math.ceil(last.offset().top + 100) + "px");
+        } else {
+          var top =
+            first.offset().top -
+            parseInt(first.css("margin-top")) -
+            parseInt(first.css("padding-top"));
+          var bottom =
+            last.offset().top -
+            parseInt(last.css("margin-top")) -
+            parseInt(last.css("padding-top")) +
+            last.outerHeight(true);
+          me.find(".full-container").css("height", bottom - top);
+          me.css("top", "");
+        }
+      });
+
+      $(".studies").each(function () {
+        var slider = $(this);
+        if (width <= 640) {
+          if (!slider.hasClass("slick-initialized")) {
+            slider.slick({
+              infinite: true,
+              speed: 200,
+              waitForAnimate: false,
+              arrows: false,
+              dots: true,
+              appendDots: slider
+                .next(".slick-dots-container")
+                .find(".dot-bois"),
+              prevArrow: slider
+                .next(".slick-dots-container")
+                .find(".arrow.left"),
+              nextArrow: slider
+                .next(".slick-dots-container")
+                .find(".arrow.right"),
+              slide: ".case-study:not(.placeholder)",
+            });
+          }
+        } else {
+          if (slider.hasClass("slick-initialized")) {
+            slider.slick("unslick");
+          }
+        }
+      });
+    });
+
+    $(window).on("resize scroll", function () {
+      var scroll = $(window).scrollTop();
+      var scroll_middle = scroll + $(window).height() / 2;
+
+      $("header").toggleClass("solid", scroll > 0);
+
+      // $('.page-block.background.magnet-left .image').css('top', Math.min($(window).height() / 2, (scroll / 2)) + 'px');
+      $(".page-block.background.magnet-left #Red-Bkgd---Top").css(
+        "transform",
+        "translateY(" + scroll + "px)"
+      );
+      $(".page-block.background.magnet-left #Red-Bkgd---Bottom").css(
+        "transform",
+        "translateY(" + scroll / 3 + "px)"
+      );
+
+      $(".page-block.image-text .image img").each(function () {
+        var offset = $(this).parent().offset().top;
+        var height = $(this).parent().outerHeight();
+        var center = offset + height / 2 + $(window).height() / 2;
+        var factor = 10;
+        $(this).css(
+          "top",
+          (center - scroll_middle) / factor -
+            parseInt($(this).css("margin-top")) * 2 +
+            "px"
+        );
+      });
+
+      $(".page-block.animate").each(function () {
+        var offset = $(this).offset().top;
+        if (scroll + $(window).height() * 0.75 >= offset) {
+          $(this).addClass("on");
+        }
+      });
+    });
+
+    $(window).trigger("resize").trigger("scroll");
+
+    // Match Height
+    // (function ($) {
+    // 	$('.match-height').matchHeight({
+    // 		property: 'height',
+    // 		byRow: false
+    // 	});
+
+    // })(jQuery);
+
+    // $('.bmapi, .bmrss').click(function() {
+    // 	$('.bmapi').toggleClass('active');
+    // 	$('.bmrss').toggleClass('active');
+    // 	$('#bmapi').toggle();
+    // 	$('#bmrss').toggle();
+    // });
+  })
+  .on("click", ".menu-button, .site-menu .close", function () {
+    $(".site-menu").toggleClass("on");
+  })
+  .on(
+    "click",
+    "section.contact form input.button[type='submit']",
+    function (e) {
+      e.preventDefault();
+      var form = $(this).closest("form");
+      form
+        .find("input.error, select.error, textarea.error")
+        .removeClass("error");
+      $.ajax({
+        type: "POST",
+        dataType: "json",
+        url: "/wp-admin/admin-ajax.php",
+        data: { action: "contact_form", data: form.serialize() },
+        success: function (response) {
+          if (response.success == 1) {
+            window.location.href = "/thank-you/";
+          } else {
+            alert(response.message);
+            for (var k in response.data) {
+              var input = form.find('*[name="' + response.data[k] + '"]');
+              if (input.length > 0) {
+                input.addClass("error");
+              }
+            }
+          }
+        },
+      });
+    }
+  );
