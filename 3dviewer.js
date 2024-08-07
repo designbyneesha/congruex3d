@@ -62,7 +62,7 @@ loader.load(
         modelLoaded = true
     },
     function (xhr) {
-        let load_amount = (xhr.loaded / xhr.total) * 99;
+        let load_amount = Math.min((xhr.loaded / xhr.total) * 100, 99);
         if (load_amount < 100) {
             progressElement.innerText = `Loading: ${load_amount}%`;
         } else {
