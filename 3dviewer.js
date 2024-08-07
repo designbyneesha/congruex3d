@@ -64,11 +64,11 @@ loader.load(
     function (xhr) {
         let load_amount = (xhr.loaded / xhr.total) * 99;
         if (load_amount < 100) {
-            console.log(load_amount + '% loaded');
+            progressElement.innerText = `Loading: ${load_amount}%`;
         } else {
-            console.log('99% loaded');
+            progressElement.innerText = `Loading: 99%`;
         }
-        progressElement.innerText = `Loading: ${xhr.loaded / xhr.total * 99}%`;
+        
     },
     function (error) {
         console.error(error);
