@@ -62,7 +62,12 @@ loader.load(
         modelLoaded = true
     },
     function (xhr) {
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        let load_amount = (xhr.loaded / xhr.total) * 99;
+        if (load_amount < 100) {
+            console.log(load_amount + '% loaded');
+        } else {
+            console.log('99% loaded');
+        }
         progressElement.innerText = `Loading: ${xhr.loaded / xhr.total * 99}%`;
     },
     function (error) {
