@@ -61,15 +61,6 @@ loader.load(
 
         modelLoaded = true
     },
-    function (xhr) {
-        let load_amount = Math.min((xhr.loaded / xhr.total) * 100, 99);
-        if (load_amount < 100) {
-            progressElement.innerText = `Loading: ${load_amount}%`;
-        } else {
-            progressElement.innerText = `Loading: 99%`;
-        }
-        
-    },
     function (error) {
         console.error(error);
     }
@@ -118,5 +109,26 @@ function animate() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const totalDuration = 5000; // 5 seconds
+    const interval = 100; // Update every 100 milliseconds
+    const steps = totalDuration / interval;
+    let currentStep = 0;
+
+    function updateProgress() {
+        const progressPercentage = Math.min((98 * (currentStep / steps)) + 1, 99); // Increase from 1 to 99
+        progressElement.innerText = `Loading: ${Math.round(progressPercentage)}%`;
+
+        if (currentStep < steps) {
+            currentStep++;
+            setTimeout(updateProgress, interval);
+        } else {
+            progressElement.innerText = 'Loading: 99%'; // Ensure it ends at 99%
+        }
+    }
+
+    updateProgress();
+});
 
 animate()
